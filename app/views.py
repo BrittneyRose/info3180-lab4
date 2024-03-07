@@ -101,11 +101,21 @@ def files():
     image_files = get_uploaded_images()
     return render_template('files.html', image_files = image_files)
 
+
+# ex. 7 logout function
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have logged out')
+    return redirect(url_for('home'))
+
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
 @login_manager.user_loader
 def load_user(id):
     return db.session.execute(db.select(UserProfile).filter_by(id=id)).scalar()
+
 
 ###
 # The functions below should be applicable to all Flask apps.
