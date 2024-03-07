@@ -7,6 +7,7 @@ from app.models import UserProfile
 from app.forms import LoginForm
 from werkzeug.security import check_password_hash
 from .forms import UploadForm
+from flask import send_from_directory
 
 from app.config import Config
 
@@ -78,6 +79,27 @@ def login():
         # Remember to flash a message to the user
          
     return render_template("login.html", form=form)
+
+# ex.6 
+#get_uploaded_images() function
+def get_uploaded_images():
+    rootdir = os.path.join(os.getcwd(), 'uploads')
+    image_files =[]
+
+    for subdir, dirs, files in os.walk(rootdir):
+        for file in files:
+            image_files.append(file)
+    return image_files
+
+@app.route('/uploads/<filename>')
+def get_image(filename):
+    return send_from_directory(os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER']), filename)
+
+@app.route('/files')
+@login_required
+def files():
+    image_files = get_uploaded_images()
+    return render_template('files.html', image_files = image_files)
 
 # user_loader callback. This callback is used to reload the user object from
 # the user ID stored in the session
